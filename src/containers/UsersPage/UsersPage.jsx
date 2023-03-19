@@ -30,21 +30,29 @@ export const UsersPage = () => {
     const [ageEnd, setAgeEnd] = useState('');
     const [city, setCity] = useState('');
 
+
+    const header = {
+        'Host': 'api.uzkanova.ru',
+        'Authorization': `Bearer ${storage.getToken()}`,
+        'Accept': 'application/json',
+    };
+
     useEffect( () => {
-        axios.get('http://api.uzkanova.ru/api/getUsersByParams',  {
+        axios.get('https://api.uzkanova.ru/api/getUsersByParams',  {
             params: {
                 sex: sex,
                 ageStart: ageStart,
                 ageEnd: ageEnd,
                 city: city,
-            }
+            },
+            headers: header
         }).then(res => {
             setListUsers(res.data)
 
         }).catch(res => {
             stores.notificationStore.addNotification({
                 title: 'Ошибка сервера',
-                description: res.response.data.message,
+                description: '',
                 icon: "error",
                 type: "error",
             });
@@ -61,7 +69,7 @@ export const UsersPage = () => {
 
     const clickCard = async (id)=> {
         setId(id)
-        axios.get('http://api.uzkanova.ru/api/getDialogBetween',  {
+        axios.get('https://api.uzkanova.ru/api/getDialogBetween',  {
             params: {
                 id_from: storage.getInfoUser().id,
                 id_to: id
@@ -141,13 +149,15 @@ export const UsersPage = () => {
 
     const searchUsers = () => {
         setListUsers([])
-        axios.get('http://api.uzkanova.ru/api/getUsersByParams',  {
+        axios.get('https://api.uzkanova.ru/api/getUsersByParams',  {
             params: {
-                sex: document.querySelector('input[name="radio-group"]:checked').value,
+
+                sex: document.querySelector('input[name="radio-group"]:checked').value ||"",
                 ageStart: ageStart,
                 ageEnd: ageEnd,
                 city: city
-            }
+            },
+            headers: header,
         }).then(res => {
             setListUsers(res.data)
 
@@ -185,7 +195,7 @@ export const UsersPage = () => {
                     </p>
 
                     <p>
-                        <input value={''} type="radio" id="test3" name="radio-group"/>
+                        <input value={''} checked type="radio" id="test3" name="radio-group"/>
                         <Labels htmlFor="test3">Любой</Labels>
                     </p>
                     <Button onClick={searchUsers} >Найти</Button>

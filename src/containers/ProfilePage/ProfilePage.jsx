@@ -6,7 +6,17 @@ import {useStores} from "@stores/useStore";
 import { ModalChangePassword } from "./ModalChangePassword"
 import * as storage from "../../lib/localStorage.js";
 import {Icon} from "@components/Icon";
+import axios from "axios";
+import {stores} from "@stores/RootStore";
+const urlconfig = {
+    HEADERS : {
+        'Host':  'api.uzkanova.ru',
 
+        'Authorization': 'Bearer dfa93495acb0aca22d68556ac349866471c38b649dbc9f06b33539eb5c357d6b57fa7fad3541ee2f47fb26ccb39f2a8d98030ebc253e842eb54f8223cdef8a0e',
+        'Accept': 'application/json',
+    },
+    URL:'api.uzkanova.ru'
+}
 export const ProfilePage = () => {
     const {authStore} = useStores();
 
@@ -16,6 +26,53 @@ export const ProfilePage = () => {
     const history = useHistory();
 
     const checkUsers = () => {
+
+    }
+
+    const loadImage = (e) => {
+        const el = document.getElementById("input__file");
+        const reader = new FileReader();
+        const file = el.files[0];
+
+        reader.onload = handleReaderLoad;
+        reader.readAsDataURL(file);
+        let urlauth = `https://${urlconfig.URL}/api/storeImage`
+        let urlauthGet = `https://${urlconfig.URL}${storage.getInfoUser().image_path}`
+        axios.get(urlauthGet,{headers: urlconfig.HEADERS})
+            .then(res => {})
+
+
+        function handleReaderLoad(e) {
+            return
+            console.log("running handleReaderLoad()", e);
+            console.log(filePayload, 999)
+            var filePayload = e.target.result;
+
+            var img = document.getElementById("previewImage");
+            img.src = filePayload;
+
+            var formData = new FormData();
+            formData.append('id', storage.getInfoUser().id);
+            formData.append('image', el.files[0]);
+            axios.post(urlauth,  formData,{headers: urlconfig.HEADERS}).then(res => {
+                if (res.data.status === 'error') {
+                    stores.notificationStore.addNotification({
+                        title: 'Заполните все поля',
+                        description: res.response.text,
+                        icon: "error",
+                        type: "error",
+                    });
+                    return
+                }
+
+            }).catch(res => {
+
+            })
+        }
+
+
+
+
 
     }
 
@@ -38,7 +95,7 @@ export const ProfilePage = () => {
                <Profile>
                    <SearchContainer>
                        <Icon name={'search'} width={20} height={20} style={{fill: 'white'}}/>
-                       <input name="file" type="file" name="file" id="input__file" style={{display: 'none'}} className="input input__file"
+                       <input onChange={e => loadImage(e)} type="file" name="file" id="input__file" style={{display: 'none'}} className="input input__file"
                               multiple/>
                        <Plusik  for="input__file"/>
                    </SearchContainer>
@@ -54,7 +111,7 @@ export const ProfilePage = () => {
                        <OneImg src="https://www.perunica.ru/uploads/posts/2019-09/thumbs/1567597238_010.jpg" alt="1"/>
                        <OneImg src="https://yobte.ru/uploads/posts/2019-11/miniatjurnye-brjunetki-81-foto-30.jpg" alt="1"/>
                        <OneImg src="https://img4.goodfon.ru/original/2048x1365/e/73/kassio-epia-model-krasotka-shatenka-poza-vzgliad-litso-ruka.jpg" alt="1"/>
-
+                       <img src={`https://api.uzkanova.ru/${storage.getInfoUser().image_path}`} id="previewImage"/>
                    </BoxImg>
                    <ProfileFunction>
                        <Button style={{margin: '0 0 12px'}} onClick={()=>{}}>Изменить</Button>

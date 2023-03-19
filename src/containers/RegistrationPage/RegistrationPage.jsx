@@ -9,7 +9,15 @@ import {stores} from "@stores/RootStore";
 import { Redirect } from "react-router-dom";
 import {useStores} from "@stores/useStore";
 
+const urlconfig = {
+    HEADERS : {
+        'Host':  'api.uzkanova.ru',
 
+        'Authorization': 'Bearer dfa93495acb0aca22d68556ac349866471c38b649dbc9f06b33539eb5c357d6b57fa7fad3541ee2f47fb26ccb39f2a8d98030ebc253e842eb54f8223cdef8a0e',
+        'Accept': 'application/json',
+    },
+    URL:'api.uzkanova.ru'
+}
 
 export const RegistrationPage = () => {
     const {authStore} = useStores();
@@ -59,7 +67,7 @@ export const RegistrationPage = () => {
                         <LoginButton>
                             <Button  onClick ={() => {
 
-                                let urlReg = 'http://api.cg10280.tmweb.ru/api/register'
+                                let urlReg = 'https://api.uzkanova.ru/api/register'
 
                                 axios.post(urlReg, {
                                         name: inn,
@@ -69,7 +77,7 @@ export const RegistrationPage = () => {
                                         sex: document.querySelector('input[name="radio-group"]:checked').value,
                                         email:email
 
-                                    }).then(res => {
+                                    },{headers: urlconfig.HEADERS}).then(res => {
                                     history.push(`/login`)
                                     stores.notificationStore.addNotification({
                                         title: 'Вы успешно зарегистррованны',

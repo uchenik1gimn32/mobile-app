@@ -63,7 +63,7 @@ export const setLogin = (login) => {
 };
 export const setToken = (token) => {
   window.localStorage.setItem("token", token);
-  setTokenReceiptTime();
+  //setTokenReceiptTime();
 };
 export const setRefreshToken = (refreshToken) => {
   if(isLoggerIn) console.log('SET refreshToken', refreshToken, new Date())

@@ -29,7 +29,7 @@ export const NotificationsPage = () => {
     const [ageEnd, setAgeEnd] = useState(100);
 
     useEffect( () => {
-        axios.get('http://api.uzkanova.ru/api/getUsersByParams',  {
+        axios.get('https://api.uzkanova.ru/api/getUsersByParams',  {
             params: {
                 sex: sex,
                 ageStart: ageStart,

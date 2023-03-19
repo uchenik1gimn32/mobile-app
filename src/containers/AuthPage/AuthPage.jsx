@@ -20,6 +20,7 @@ import styled from "styled-components";
 import axios from "axios";
 import {stores} from "@stores/RootStore";
 import * as storage from "~/lib/localStorage";
+import {setToken} from "~/lib/localStorage";
 
 const urlconfig = {
     HEADERS : {
@@ -48,10 +49,8 @@ export const AuthPage = observer(() => {
 
 
         axios.post(urlauth,  {
-
-            login :email,
+            email :email,
             password: password
-
         },{headers: urlconfig.HEADERS}).then(res => {
             if (res.data.status === 'error') {
                 stores.notificationStore.addNotification({
@@ -62,10 +61,11 @@ export const AuthPage = observer(() => {
                 });
                 return
             }
-            authStore.userInformation = res.data[0];
-            storage.setInfoUser(res.data[0]);
-            history.push(`/profile`)
-            console.log( authStore.userInformation)
+
+            authStore.userInformation = res.data.data.user;
+            storage.setInfoUser(res.data.data.user);
+            storage.setToken(res.data.data.token)
+            history.push(`/profile`);
         }).catch(res => {
             stores.notificationStore.addNotification({
                 title: 'Заполните все поля',
