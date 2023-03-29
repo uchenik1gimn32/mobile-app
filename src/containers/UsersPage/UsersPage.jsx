@@ -71,9 +71,9 @@ export const UsersPage = () => {
         setId(id)
         axios.get('https://api.uzkanova.ru/api/getDialogBetween',  {
             params: {
-                id_from: storage.getInfoUser().id,
                 id_to: id
-            }
+            },
+            headers: header
         }).then( async res => {
             let arr = [];
 
@@ -98,11 +98,11 @@ export const UsersPage = () => {
     }
 
     const getMessages = () => {
-        axios.get('http://api.uzkanova.ru/api/getDialogBetween',  {
+        axios.get('https://api.uzkanova.ru/api/getDialogBetween',  {
             params: {
-                id_from: storage.getInfoUser().id,
                 id_to: id
-            }
+            },
+            headers: header
         }).then( async res => {
             let arr = [];
 
@@ -126,16 +126,17 @@ export const UsersPage = () => {
     }
 
     const sendMassage = async ()=> {
-        axios.post('http://api.uzkanova.ru/api/newMessage',  {
+        axios.post('https://api.uzkanova.ru/api/newMessage',  {
             id_to_user: id,
-            id_from_user: storage.getInfoUser().id,
             text: massageText
 
+        }, {            headers: header
         }).then(res => {
             setMassageText('')
             setTimeout(()=> {
                 getMessages()
             }, 200)
+
         }).catch(res => {
             stores.notificationStore.addNotification({
                 title: 'Ошибка сервера',

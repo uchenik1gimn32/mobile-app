@@ -8,20 +8,16 @@ import * as storage from "../../lib/localStorage.js";
 import {Icon} from "@components/Icon";
 import axios from "axios";
 import {stores} from "@stores/RootStore";
-const urlconfig = {
-    HEADERS : {
-        'Host':  'api.uzkanova.ru',
 
-        'Authorization': 'Bearer dfa93495acb0aca22d68556ac349866471c38b649dbc9f06b33539eb5c357d6b57fa7fad3541ee2f47fb26ccb39f2a8d98030ebc253e842eb54f8223cdef8a0e',
-        'Accept': 'application/json',
-    },
-    URL:'api.uzkanova.ru'
-}
 export const ProfilePage = () => {
     const {authStore} = useStores();
-
-
     const [openChangePass, setOpenChangePass] = useState(false);
+
+    const header = {
+        'Host': 'api.uzkanova.ru',
+        'Authorization': `Bearer ${storage.getToken()}`,
+        'Accept': 'application/json',
+    };
 
     const history = useHistory();
 
@@ -36,16 +32,13 @@ export const ProfilePage = () => {
 
         reader.onload = handleReaderLoad;
         reader.readAsDataURL(file);
-        let urlauth = `https://${urlconfig.URL}/api/storeImage`
-        let urlauthGet = `https://${urlconfig.URL}${storage.getInfoUser().image_path}`
-        axios.get(urlauthGet,{headers: urlconfig.HEADERS})
-            .then(res => {})
+        let urlauth = `https://api.uzkanova.ru/api/storeImage`
+
+
 
 
         function handleReaderLoad(e) {
-            return
-            console.log("running handleReaderLoad()", e);
-            console.log(filePayload, 999)
+
             var filePayload = e.target.result;
 
             var img = document.getElementById("previewImage");
@@ -54,7 +47,9 @@ export const ProfilePage = () => {
             var formData = new FormData();
             formData.append('id', storage.getInfoUser().id);
             formData.append('image', el.files[0]);
-            axios.post(urlauth,  formData,{headers: urlconfig.HEADERS}).then(res => {
+            formData.append('is_avatar', 1);
+
+            axios.post(urlauth,  formData,{headers: header}).then(res => {
                 if (res.data.status === 'error') {
                     stores.notificationStore.addNotification({
                         title: 'Заполните все поля',
@@ -101,7 +96,7 @@ export const ProfilePage = () => {
                    </SearchContainer>
 
                    <ProfileHead>
-                       <HeadName src="https://fikiwiki.com/uploads/posts/2022-02/1645015367_15-fikiwiki-com-p-kartinki-krasivikh-devushek-skachat-bespla-17.jpg" alt="1"/>
+                       <HeadName src={storage.getInfoUser().images[0].image_path} alt="1"/>
                        <HeadAbout>{storage.getInfoUser().name}</HeadAbout>
                    </ProfileHead>
                    <BoxImg>

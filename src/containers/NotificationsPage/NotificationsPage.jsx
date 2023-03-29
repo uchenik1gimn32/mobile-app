@@ -28,13 +28,21 @@ export const NotificationsPage = () => {
     const [ageStart, setAgeStart] = useState(0);
     const [ageEnd, setAgeEnd] = useState(100);
 
+    const header = {
+        'Host': 'api.uzkanova.ru',
+        'Authorization': `Bearer ${storage.getToken()}`,
+        'Accept': 'application/json',
+    };
+
+
     useEffect( () => {
         axios.get('https://api.uzkanova.ru/api/getUsersByParams',  {
             params: {
                 sex: sex,
                 ageStart: ageStart,
                 ageEnd: ageEnd
-            }
+            },
+            headers: header
         }).then(res => {
             setListUsers(res.data)
 
@@ -58,11 +66,12 @@ export const NotificationsPage = () => {
 
     const clickCard = async (id)=> {
         setId(id)
-        axios.get('http://api.uzkanova.ru/api/getDialogBetween',  {
+        axios.get('https://api.uzkanova.ru/api/getDialogBetween',  {
             params: {
                 id_from: storage.getInfoUser().id,
                 id_to: id
-            }
+            },
+            headers: header
         }).then( async res => {
             let arr = [];
 
@@ -87,11 +96,12 @@ export const NotificationsPage = () => {
     }
 
     const getMessages = () => {
-        axios.get('http://api.uzkanova.ru/api/getDialogBetween',  {
+        axios.get('https://api.uzkanova.ru/api/getDialogBetween',  {
             params: {
                 id_from: storage.getInfoUser().id,
                 id_to: id
-            }
+            },
+            headers: header
         }).then( async res => {
             let arr = [];
 
@@ -115,12 +125,11 @@ export const NotificationsPage = () => {
     }
 
     const sendMassage = async ()=> {
-        axios.post('http://api.uzkanova.ru/api/newMessage',  {
+        axios.post('https://api.uzkanova.ru/api/newMessage',  {
             id_to_user: id,
-            id_from_user: storage.getInfoUser().id,
             text: massageText
 
-        }).then(res => {
+        }, {headers: header}).then(res => {
             setMassageText('')
             setTimeout(()=> {
                 getMessages()
@@ -132,8 +141,10 @@ export const NotificationsPage = () => {
                 icon: "error",
                 type: "error",
             });
+
         })
         setMassage(true)
+
     }
 
 
